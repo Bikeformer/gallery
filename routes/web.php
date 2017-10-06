@@ -11,6 +11,17 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', 'PostController@index')->name('home.posts.index');
+Route::get('/posts/{post}', 'PostController@show')->name('home.posts.show');
+
+Auth::routes();
+
+Route::group(['middleware' => ['auth', 'admin'], 'prefix' => 'panel', 'namespace' => 'Panel'], function ()
+{
+    Route::get('/', function()
+    {
+        return redirect()->route('posts.index');
+    });
+
+    Route::resource('/posts', 'PostController', ['except' => ['show']]);
 });
